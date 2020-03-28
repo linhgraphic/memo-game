@@ -9,20 +9,15 @@ function App() {
     baseCards
   ]);
   const [cards, setCards] = useState(initialiseDeck);
-  const [flippedCards, setFlippedCards] = useState({});
-  // const cardArray = () => {
-  //   for (let i = 0; i < cards.length - 1; i += 4) {
-  //     return Array.from({ length: 4 }, ()=>(e => cards.slice(e, e + 4))(i));
-  //   }
-  // };
+  const [flippedCards, setFlippedCards] = useState(new Set());
   const onReset = () => setCards(initialiseDeck());
   const onCardClick = event => {
-    const numberOfFlippedCards = Object.keys(flippedCards).length;
+    const numberOfFlippedCards = flippedCards.size;
     if (numberOfFlippedCards) {
       if (numberOfFlippedCards > 1) return;
-      setTimeout(() => setFlippedCards({}), 5000);
+      setTimeout(() => setFlippedCards(new Set()), 5000);
     }
-    setFlippedCards({ ...flippedCards, [event.target.id]: true });
+    setFlippedCards(new Set(flippedCards.add(+event.target.id)));
   };
 
   return (
@@ -33,10 +28,9 @@ function App() {
             symbol={symbol}
             id={index}
             onClick={onCardClick}
-            flipped={flippedCards[index]}
+            flipped={flippedCards.has(index)}
           />
         ))}
-        {/* <div>{cardArray()}</div> */}
       </header>
       <button onClick={onReset}>click</button>
     </div>
