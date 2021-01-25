@@ -1,0 +1,15 @@
+.start-panel {
+  text-align: center;
+  background-color: rgb(250, 152, 82);
+  color: black;
+  border: 2px solid black;
+  width: 40vw;
+  height: 70vh;
+}
+.start-panel input {
+  font-size: 1em;
+}
+
+.start-panel button {
+  font-size: 1em;
+}

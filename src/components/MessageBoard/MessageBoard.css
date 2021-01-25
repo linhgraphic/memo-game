@@ -1,0 +1,9 @@
+.message {
+  background-color: rgb(75, 219, 255);
+  text-align: center;
+  color: black;
+  border: 2px solid black;
+  width: 50vw;
+  height: 50vh;
+  z-index: 1;
+}
