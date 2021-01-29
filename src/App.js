@@ -4,18 +4,36 @@ import { shuffle } from "./utils";
 import { baseCards } from "./contants";
 import Card from "./components/Card";
 import MessageBoard from "./components/MessageBoard";
-import Timer from "./components/Timer";
 import { StartPanel } from "./components/StartPanel";
+import Header from "./components/Header";
+import Modal from "./components/Modal";
+import RecordPanel from "./components/RecordPanel";
+import {
+  loadSavedValues,
+  savedSetting,
+  saveRecord,
+} from "./utils/LocalStorageManager";
 
 function App() {
-  const [cardNumbers, setCardNumbers] = useState(1);
+  const initialCardNumber = loadSavedValues("initialCardNumber");
+  const initialCardDisplayTime = loadSavedValues("initialCardDisplayTime");
+  const [cardNumber, setCardNumber] = useState(initialCardNumber || 2);
+  const [cardDisplayTime, setCardDisplayTime] = useState(
+    initialCardDisplayTime || 1
+  );
+  const [title, setTitle] = useState("");
+  const [records, setRecords] = useState(loadSavedValues("records") || []);
+
   const initialiseDeck = useCallback(() => {
-    const deck = shuffle(baseCards).slice(0, cardNumbers);
+    const deck = shuffle(baseCards).slice(0, cardNumber);
     return shuffle([].concat(deck).concat(deck));
-  }, [cardNumbers]);
-  const onStartInputChange = (event) => {
-    setCardNumbers(event.target.value);
+  }, [cardNumber]);
+
+  const onSetCardNumber = (event) => {
+    setCardNumber(event.target.value);
   };
+  const onSetCardDisplayTime = (event) =>
+    setCardDisplayTime(event.target.value);
   const [cards, setCards] = useState(initialiseDeck);
   const [flippedCards, setFlippedCards] = useState(new Set());
   const [identicals, setIdenticals] = useState(new Set());
@@ -23,9 +41,33 @@ function App() {
   const [result, setResult] = useState("");
   const [currentTime, setCurrentTime] = useState(0);
   const [isGameStarted, SetGameStarted] = useState(false);
+  const [loadRecordPanel, SetLoadRecordPanel] = useState(false);
 
+  const onSetTitle = (event) => {
+    !records.some((record) => record.hasOwnProperty(event.target.value))
+      ? setTitle(event.target.value)
+      : setTitle("" + new Date().getTime());
+  };
+
+  const onSaveRecord = () => {
+    let tempRecord = {};
+    let date = new Date().toDateString();
+    tempRecord[title] = {
+      date: date,
+      finishTime: currentTime,
+      cardNumber: cardNumber,
+    };
+    setRecords([...records, tempRecord]);
+  };
+  const onDeleteRecord = (record) => {
+    setRecords(record);
+    console.log(record);
+  };
+  const onDeleteAll = () => {
+    setRecords([]);
+  };
+  const onLoadRecordPanel = () => SetLoadRecordPanel(true);
   useEffect(() => {
-    console.log(cardNumbers, currentTime);
     const timeout = setTimeout(() => setCurrentTime(currentTime + 1), 1000);
     if (gameCompleted || !isGameStarted) {
       clearTimeout(timeout);
@@ -33,10 +75,16 @@ function App() {
     return () => clearTimeout(timeout);
   }, [currentTime, gameCompleted, isGameStarted]);
 
-  useEffect(() => {}, [gameCompleted]);
+  useEffect(() => {
+    savedSetting("initialCardNumber", cardNumber);
+    savedSetting("initialCardDisplayTime", cardDisplayTime);
+  }, [cardNumber, cardDisplayTime]);
 
+  useEffect(() => saveRecord("records", records), [records]);
   const onGameStart = () => {
+    setTitle("");
     SetGameStarted(true);
+    SetLoadRecordPanel(false);
     setCards(initialiseDeck());
     setFlippedCards(new Set());
     setIdenticals(new Set());
@@ -46,7 +94,6 @@ function App() {
 
   const onReset = () => {
     setCards(initialiseDeck());
-    setCardNumbers(1);
     setFlippedCards(new Set());
     setIdenticals(new Set());
     setGameCompleted(false);
@@ -55,15 +102,15 @@ function App() {
   };
   const onCardClick = (event) => {
     const numberOfFlippedCards = flippedCards.size;
+    const id = +event.currentTarget.id;
+
     if (numberOfFlippedCards) {
       if (numberOfFlippedCards > 1) {
         return;
       }
-      if (
-        cards[flippedCards.values().next().value] === cards[+event.target.id]
-      ) {
+      if (cards[flippedCards.values().next().value] === cards[id]) {
         setIdenticals(identicals.add(flippedCards.values().next().value));
-        setIdenticals(identicals.add(+event.target.id));
+        setIdenticals(identicals.add(id));
       }
       if (identicals.size === cards.length) {
         setResult("You Win!!!");
@@ -72,18 +119,25 @@ function App() {
       }
       setTimeout(() => {
         setFlippedCards(new Set());
-      }, 2000);
+      }, cardDisplayTime * 1000);
     }
-    setFlippedCards(new Set(flippedCards.add(+event.target.id)));
+    setFlippedCards(new Set(flippedCards.add(id)));
   };
 
   return (
     <div className="app">
-      <header>
-        <h1 className="timer">
-          <p>⏳</p> <Timer time={currentTime} />
-        </h1>
-      </header>
+      <Header
+        onSaveCardNumber={onSetCardNumber}
+        onSaveCardDisplayTime={onSetCardDisplayTime}
+        {...{
+          onLoadRecordPanel,
+          currentTime,
+          isGameStarted,
+          onReset,
+          cardNumber,
+          cardDisplayTime,
+        }}
+      />
       <div className="deck-container">
         {cards.map((symbol, index) => (
           <Card
@@ -93,27 +147,35 @@ function App() {
             onClick={onCardClick}
             flipped={flippedCards.has(index)}
             identical={identicals.has(index)}
+            {...{ cardNumber: cards.length }}
           />
         ))}
-        <StartPanel
-          cardNumbers={cardNumbers}
-          setCardNumbers={onStartInputChange}
-          isGameStarted={isGameStarted}
-          onStart={onGameStart}
-        />
-        <MessageBoard
-          onReset={onReset}
-          isFinished={gameCompleted}
-          result={result}
-          time={currentTime}
-        />
+        <Modal open={!isGameStarted}>
+          <StartPanel
+            onStart={onGameStart}
+            cardNumber={cardNumber}
+            setCardNumber={onSetCardNumber}
+          />
+        </Modal>
+        <Modal open={gameCompleted}>
+          <MessageBoard
+            result={result}
+            time={currentTime}
+            title={title}
+            saveRecord={onSaveRecord}
+            setTitle={onSetTitle}
+            onClose={onReset}
+          />
+        </Modal>
+        <Modal open={loadRecordPanel}>
+          <RecordPanel
+            availableRecords={records}
+            deleteRecord={onDeleteRecord}
+            onClose={() => SetLoadRecordPanel(false)}
+            deleteAll={onDeleteAll}
+          />
+        </Modal>
       </div>
-      <button
-        className={`reset-button${isGameStarted ? "" : " closed"}`}
-        onClick={onReset}
-      >
-        Reset
-      </button>
     </div>
   );
 }

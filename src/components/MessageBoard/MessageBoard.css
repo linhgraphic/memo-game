@@ -7,3 +7,18 @@
   height: 50vh;
   z-index: 1;
 }
+
+.message input {
+  font-size: 0.8em;
+  text-align: center;
+  border: 1px solid black;
+}
+.close {
+  font-size: 0.8em;
+  border: 1px solid black;
+  box-shadow: -2px 2px 2px rgb(36, 36, 36);
+}
+.message button {
+  font-size: 0.8em;
+  border: 1px solid black;
+}

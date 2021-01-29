@@ -1,0 +1,19 @@
+.record-container {
+  min-width: 40vmin;
+  margin: 0.5px;
+  background-color: rgb(255, 200, 149);
+  box-shadow: 3px 3px 2px rgb(36, 36, 36);
+  color: rgb(1, 1, 70);
+}
+
+.record-container ul {
+  list-style-type: none;
+}
+
+.record-container ul:hover {
+  text-decoration-line: line-through;
+}
+.record-container li {
+  font-size: calc(0.5em+1vmin);
+  font-weight: bold;
+}

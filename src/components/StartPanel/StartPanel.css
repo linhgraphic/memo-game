@@ -6,8 +6,11 @@
   width: 40vw;
   height: 70vh;
 }
+
 .start-panel input {
   font-size: 1em;
+  text-align: right;
+  width: 2em;
 }
 
 .start-panel button {
