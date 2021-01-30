@@ -42,17 +42,16 @@ function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [isGameStarted, SetGameStarted] = useState(false);
   const [loadRecordPanel, SetLoadRecordPanel] = useState(false);
-
+  const setRecordId = () => new Date().getTime();
   const onSetTitle = (event) => {
-    !records.some((record) => record.hasOwnProperty(event.target.value))
-      ? setTitle(event.target.value)
-      : setTitle("" + new Date().getTime());
+    setTitle(event.target.value);
   };
 
   const onSaveRecord = () => {
     let tempRecord = {};
     let date = new Date().toDateString();
     tempRecord[title] = {
+      id: setRecordId(),
       date: date,
       finishTime: currentTime,
       cardNumber: cardNumber,

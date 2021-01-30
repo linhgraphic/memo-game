@@ -2,8 +2,10 @@ import React from "react";
 import Record from "../../components/Record";
 import "./RecordPanel.css";
 
-const removeRecord = (records, id) => {
-  return records.filter((record) => !record.hasOwnProperty(id));
+const removeRecord = (records, comparedId) => {
+  return records.filter(
+    (record) => Object.values(record)[0].id !== +comparedId
+  );
 };
 
 const RecordPanel = ({
@@ -24,7 +26,7 @@ const RecordPanel = ({
         <Record
           onClick={onDeleteRecord}
           key={index}
-          record={Object.keys(record)[0]}
+          record={Object.values(record)[0].id}
           date={Object.values(record)[0].date}
           finishTime={Object.values(record)[0].finishTime}
           cardNumber={Object.values(record)[0].cardNumber}
