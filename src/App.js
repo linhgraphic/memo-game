@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import "./App.css";
 import { shuffle } from "./utils";
 import { baseCards } from "./contants";
@@ -21,6 +21,7 @@ function App() {
   const [cardDisplayTime, setCardDisplayTime] = useState(
     initialCardDisplayTime || 1
   );
+  const timerRef = useRef({ current: {} });
   const [title, setTitle] = useState("");
   const [records, setRecords] = useState(loadSavedValues("records") || []);
 
@@ -102,9 +103,15 @@ function App() {
   const onCardClick = (event) => {
     const numberOfFlippedCards = flippedCards.size;
     const id = +event.currentTarget.id;
-
     if (numberOfFlippedCards) {
-      if (numberOfFlippedCards > 1) {
+      if (numberOfFlippedCards === 1) {
+        timerRef.current.timeOut = setTimeout(
+          () => setFlippedCards(new Set()),
+          cardDisplayTime * 1000
+        );
+      } else {
+        clearTimeout(timerRef.current.timeOut);
+        setFlippedCards(new Set([id]));
         return;
       }
       if (cards[flippedCards.values().next().value] === cards[id]) {
@@ -116,13 +123,9 @@ function App() {
         setGameCompleted(true);
         return;
       }
-      setTimeout(() => {
-        setFlippedCards(new Set());
-      }, cardDisplayTime * 1000);
     }
     setFlippedCards(new Set(flippedCards.add(id)));
   };
-
   return (
     <div className="app">
       <Header
