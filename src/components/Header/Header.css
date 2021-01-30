@@ -29,6 +29,7 @@ header {
   font-size: calc(1em + 1vmin);
 }
 .setting-panel {
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-evenly;

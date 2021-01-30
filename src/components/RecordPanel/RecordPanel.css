@@ -1,4 +1,5 @@
 .record-panel {
+  z-index: 100;
   padding: 0.5em;
   min-width: 50vmin;
   height: 70vh;
