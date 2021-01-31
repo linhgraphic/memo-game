@@ -12,7 +12,6 @@ const Card = ({ onClick, symbol, id, flipped, identical, cardNumber }) => {
       className={`card ${flipped || identical ? "flipped" : ""}`}
       onClick={flipped || identical ? noop : onClick}
       id={id}
-      cardNumber={cardNumber}
       style={{
         width: `calc(60vmin/${cardNumber / 2})`,
         height: `calc(100vmin/${cardNumber / 2})`,

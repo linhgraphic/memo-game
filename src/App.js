@@ -19,7 +19,7 @@ function App() {
   const initialCardDisplayTime = loadSavedValues("initialCardDisplayTime");
   const [cardNumber, setCardNumber] = useState(initialCardNumber || 2);
   const [cardDisplayTime, setCardDisplayTime] = useState(
-    initialCardDisplayTime || 1
+    initialCardDisplayTime || 2
   );
   const timerRef = useRef({ current: {} });
   const [title, setTitle] = useState("");
