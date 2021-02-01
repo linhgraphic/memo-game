@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "220c45d3c8fd24816ff21cc6bf45e469",
+    "revision": "bfe1f53be91ab4c2fde361a652a3e143",
     "url": "/memo-game/index.html"
   },
   {
-    "revision": "17a7b513ab63211b70a3",
+    "revision": "ffbb5b77375976601a51",
     "url": "/memo-game/static/css/main.408284a3.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/memo-game/static/js/2.354405fd.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "17a7b513ab63211b70a3",
-    "url": "/memo-game/static/js/main.feda9469.chunk.js"
+    "revision": "ffbb5b77375976601a51",
+    "url": "/memo-game/static/js/main.08826c82.chunk.js"
   },
   {
     "revision": "c356bfc4632929742fe6",
